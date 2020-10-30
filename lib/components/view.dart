@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tk/models/list.dart';
 import '../models/view.dart';
 import '../utils/fetchGet.dart';
 import 'common.dart';
@@ -7,8 +8,14 @@ class ViewWidget extends StatefulWidget {
   static const String routeName = "/view";
   final String path;
   final String title;
+  final int idx;
+  final List<ListElement> elements;
 
-  ViewWidget(this.path, this.title, {Key key}) : super(key: key);
+  ViewWidget(this.idx, this.elements, {Key key})
+      : assert(idx >= 0),
+        path = elements.elementAt(idx).path,
+        title = elements.elementAt(idx).title,
+        super(key: key);
 
   @override
   _ViewWidgetState createState() => _ViewWidgetState();
@@ -33,79 +40,160 @@ class _ViewWidgetState extends State<ViewWidget> {
   }
 
   GestureTapCallback toggleShowControl() {
-    return () {setState(() {_showControl = !_showControl; });};
+    return () {
+      setState(() {
+        _showControl = !_showControl;
+      });
+    };
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> controls =
-        (_showControl) ? [_renderTopControl(), _renderBottomControl()] : [];
-
     return Scaffold(
-          body: Stack(
-            children: [
-              InkWell(
-                onTap: toggleShowControl(),
-                child : ListView(children: [ImageList(widget.path, widget.title),]),
-              ),
-              ...controls,
-            ],
+      body: Stack(
+        children: [
+          InkWell(
+            onTap: toggleShowControl(),
+            child: ListView(children: [
+              ImageList(widget.path, widget.title),
+            ]),
           ),
-        );
+          if (_showControl) ...[
+            _renderTopControl(),
+            _renderBottomControl(),
+          ],
+        ],
+      ),
+    );
   }
 
   Widget _renderTopControl() {
-    const titleTextStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+    const titleTextStyle = TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
     return Positioned(
       top: 0,
-      child: Row(
+      width: MediaQuery.of(context).size.width,
+      child: Container(
+        padding: EdgeInsets.fromLTRB(10, 4, 0, 4),
+        color: Colors.white,
+        child: Column(
           children: [
-            Icon(Icons.arrow_back_ios, size: 24),
-            Text(
-              widget.title,
-              style: titleTextStyle,
-              overflow: TextOverflow.ellipsis,
+            Row(
+              children: [
+                InkWell(
+                  child: Icon(Icons.arrow_back_ios, size: 24),
+                  onTap: () { Navigator.pop(context); },
+                ),
+                Text(
+                  widget.title,
+                  style: titleTextStyle,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
-            Divider(thickness: 2,),
-          ]),
+            Divider(
+              thickness: 2,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
   Widget _renderBottomControl() {
-    const double iconSize = 20;
+    const double iconSize = 32;
     return Positioned(
       bottom: 0,
-      child: Row(
-        children: [
-          Divider(thickness: 2,),
-          Icon(Icons.format_list_bulleted, size: iconSize),
-          Icon(Icons.arrow_back_ios_rounded, size: iconSize),
-          Icon(Icons.arrow_forward_ios_rounded, size: iconSize),
-        ],
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        alignment: Alignment.centerRight,
+        padding: EdgeInsets.fromLTRB(0, 4, 10, 4),
+        color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Divider(
+              thickness: 2,
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                InkWell(
+                  child: Icon(Icons.format_list_bulleted, size: iconSize),
+                  onTap: () { Navigator.pop(context); },
+                ),
+                SizedBox(width: 40),
+                backIconButton(),
+                SizedBox(width: 10),
+                forwardIconButton(),
+              ],
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget backIconButton() {
+    int idx = widget.idx;
+    List<ListElement> elements = widget.elements;
+    Color color = Colors.black12;
+    GestureTapCallback cb = () {};
+
+    if(idx + 1 < elements.length && elements.elementAt(idx+1).title != null) {
+      color = Colors.black;
+      cb = () {
+        Navigator.popAndPushNamed(context, ViewWidget.routeName,
+            arguments: ViewArgs(widget.idx + 1, widget.elements));
+      };
+    }
+    return InkWell(
+      child: Icon(Icons.arrow_back_ios_rounded, size: 40, color: color,),
+      onTap: cb,
+    );
+  }
+
+  Widget forwardIconButton() {
+    int idx = widget.idx;
+    List<ListElement> elements = widget.elements;
+    Color color = Colors.black12;
+    GestureTapCallback cb = () {};
+
+    if(idx - 1 >= 0 && elements.elementAt(idx-1).title != null) {
+      color = Colors.black;
+      cb = () {
+        Navigator.popAndPushNamed(context, ViewWidget.routeName,
+            arguments: ViewArgs(widget.idx - 1, widget.elements));
+      };
+    }
+    return InkWell(
+      child: Icon(Icons.arrow_forward_ios_rounded, size: 40, color: color,),
+      onTap: cb,
     );
   }
 }
 
 class ImageList extends StatelessWidget {
-  String path, title;
+  final String path, title;
+
   ImageList(this.path, this.title);
 
   @override
   Widget build(BuildContext context) {
-    return Container(child: FutureBuilder<ViewModel>(
-      future: fetchView(this.path, this.title),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Column(
-            children: buildImage(snapshot),
-          );
-        } else if (snapshot.hasError) {
-          return Text("${snapshot.error}");
-        }
-        return loading();
-      },
-    ),);
+    return Container(
+      child: FutureBuilder<ViewModel>(
+        future: fetchView(this.path, this.title),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Column(
+              children: buildImage(snapshot),
+            );
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+          return loading();
+        },
+      ),
+    );
   }
 
   List<Widget> buildImage(snapshot) {

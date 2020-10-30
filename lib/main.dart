@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
           final ViewArgs args = settings.arguments;
           return MaterialPageRoute(builder: (context) {
             return SafeArea(
-              child: ViewWidget(args.path, args.title, key: UniqueKey()),
+              child: ViewWidget(args.idx, args.elements, key: UniqueKey()),
             );
           });
         } else {

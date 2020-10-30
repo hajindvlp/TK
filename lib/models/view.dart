@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'package:html/parser.dart';
+import 'package:tk/models/list.dart';
 import '../utils/fetchGet.dart';
 import 'dart:convert';
 import 'model.dart';
 
-class ViewArgs extends BasicModel {
-  ViewArgs(path, title) : super(path: path, title: title);
+class ViewArgs {
+  List<ListElement> elements;
+  int idx;
+  ViewArgs(this.idx, this.elements);
 }
 
 class ViewModel extends ContainerModel<ViewElement> {

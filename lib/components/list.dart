@@ -97,7 +97,8 @@ class _ListWidgetState extends State<ListWidget> {
     TextStyle titleFontStyle =
         TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
 
-    for (final e in snapshot.data.elements) {
+    for (var i = 0; i < snapshot.data.elements.length; i++) {
+      ListElement e = snapshot.data.elements.elementAt(i);
       if (e.title != null) {
         elements.add(Column(
           children: [
@@ -114,7 +115,7 @@ class _ListWidgetState extends State<ListWidget> {
                   ]),
                 ),
                 onTap: () {
-                  onListTileTap(e.path, e.title);
+                  onListTileTap(i, snapshot.data.elements);
                 }),
             Divider(
               thickness: 2,
@@ -127,8 +128,8 @@ class _ListWidgetState extends State<ListWidget> {
     return elements;
   }
 
-  void onListTileTap(String path, String title) {
+  void onListTileTap(int idx, List<ListElement> elements) {
     Navigator.pushNamed(context, ViewWidget.routeName,
-        arguments: ViewArgs(path, title));
+        arguments: ViewArgs(idx, elements));
   }
 }
