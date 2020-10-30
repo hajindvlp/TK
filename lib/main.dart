@@ -9,6 +9,8 @@ import 'models/view.dart';
 
 void main() => runApp(MyApp());
 
+// TODO : add theme (light & dark theme)
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

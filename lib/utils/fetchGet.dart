@@ -5,7 +5,7 @@ Future<http.Response> fetchGet(String path) {
 }
 
 String makeFull(String path) {
-  if (path.startsWith("http")) {
+  if (path.startsWith("https")) {
     return path;
   } else {
     return "https://tkor.pw${path}";

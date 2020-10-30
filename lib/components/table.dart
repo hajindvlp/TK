@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'list.dart';
 import 'common.dart';
+import 'setting.dart';
 
 import '../models/table.dart';
 import '../models/list.dart';
@@ -16,8 +17,6 @@ class TableWidget extends StatefulWidget {
 }
 
 class _TableWidgetState extends State<TableWidget> {
-  static const titleFontStyle =
-      TextStyle(fontWeight: FontWeight.bold, fontSize: 40);
   Future<TableModel> futureTableModel;
 
   @override
@@ -42,22 +41,30 @@ class _TableWidgetState extends State<TableWidget> {
   }
 
   // Builds Top bar
+  // TODO : Search bar animation
+  // TODO : Controls animation
   Widget _renderTitle() {
-    // TODO : Search Bar
-    // TOOD : top animation controls
     String title = widget.path.split('/')[1];
+    const double iconSize = 40;
+    const TextStyle titleStyle = TextStyle(fontSize: 36, fontWeight: FontWeight.bold);
 
-    return Row(
-      children: <Widget>[
-        Container(
-            padding: EdgeInsets.fromLTRB(20, 40, 0, 10),
-            child: Text(title, style: titleFontStyle)),
-        // TextField(
-        //   decoration: InputDecoration(
-        //     labelText: "Search",
-        //   ),
-        // )
-      ],
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 30, 20, 5),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(title, style: titleStyle),
+          Spacer(),
+          Center(child: Icon(Icons.search, size: iconSize)),
+          SizedBox(width: 10),
+          Center(child:
+            RotatedBox(
+              quarterTurns: 1,
+              child: Icon(Icons.arrow_forward_ios, size: iconSize),
+            )
+          ),
+        ],
+      ),
     );
   }
 
@@ -134,16 +141,39 @@ class TableList extends StatefulWidget {
 
 class _TableListState extends State<TableList> {
   static const List<String> tablePaths = ["/웹툰", "/단행본", "/망가", "/포토툰"];
+  static const List<String> tableLabels = ["웹툰", "단행본", "망가", "포토툰", "설정"];
   int _selectedIndex = 0;
 
-  final List<BottomNavigationBarItem> items = tablePaths
-      .map((tablePath) => BottomNavigationBarItem(
-          icon: Icon(Icons.home), label: tablePath.split('/')[1]))
-      .toList();
+  final List<BottomNavigationBarItem> items = <BottomNavigationBarItem>[
+    BottomNavigationBarItem(
+      icon: Icon(Icons.all_inbox),
+      label: tableLabels[0],
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.article),
+      label: tableLabels[1],
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.backup_table),
+      label: tableLabels[2],
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.camera_alt),
+      label: tableLabels[3],
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.settings),
+      label: tableLabels[4],
+    ),
+  ];
 
-  final List<TableWidget> tables = tablePaths
-      .map((tablePath) => new TableWidget(key: UniqueKey(), path: tablePath))
-      .toList();
+  final List<Widget> tables = <Widget>[
+    TableWidget(key: UniqueKey(), path: tablePaths[0],),
+    TableWidget(key: UniqueKey(), path: tablePaths[1],),
+    TableWidget(key: UniqueKey(), path: tablePaths[2],),
+    TableWidget(key: UniqueKey(), path: tablePaths[3],),
+    Setting(),
+  ];
 
   void _onItemTapped(int index) {
     if (index != _selectedIndex) {
@@ -158,6 +188,7 @@ class _TableListState extends State<TableList> {
     return Scaffold(
       body: tables.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
+        unselectedItemColor: Colors.black12,
         items: items,
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],

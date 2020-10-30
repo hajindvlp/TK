@@ -16,8 +16,6 @@ class ListWidget extends StatefulWidget {
 }
 
 class _ListWidgetState extends State<ListWidget> {
-  static const titleFontStyle =
-      TextStyle(fontWeight: FontWeight.bold, fontSize: 40);
   Future<ListModel> futureListModel;
 
   @override
@@ -30,27 +28,45 @@ class _ListWidgetState extends State<ListWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Column(
-      children: [
-        _renderTitle(),
-        Divider(
-          height: 10,
-          thickness: 2,
-        ),
-        Expanded(child: _renderList()),
-      ],
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _renderTitle(),
+            Divider(
+              height: 10,
+              thickness: 2,
+            ),
+            Expanded(child: _renderList()),
+          ],
     ));
   }
 
-  // TODO : Controls
   // TODO : change hyphens to space
   // TODO : Image & Scrolling thingy
   Widget _renderTitle() {
-    return Row(children: <Widget>[
-      Container(
-          padding: EdgeInsets.fromLTRB(20, 40, 0, 10),
-          child: Text(widget.title,
-              style: titleFontStyle, overflow: TextOverflow.fade)),
-    ]);
+    const TextStyle titleStyle = TextStyle(fontSize: 28, fontWeight: FontWeight.bold);
+    const double iconSize = 30;
+    String title = widget.title.replaceAll("-", " ");
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10, 40, 0, 10),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          InkWell(
+            child: Container(
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.0)),
+              child: Icon(Icons.arrow_back_ios_outlined, size: iconSize),
+            ),
+            onTap: () { Navigator.pop(context); },
+          ),
+          SizedBox(width: 10,),
+          Expanded(
+            child: Text(title, style: titleStyle, overflow: TextOverflow.fade),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _renderList() {
