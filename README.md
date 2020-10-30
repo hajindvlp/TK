@@ -1,16 +1,33 @@
-# tk
+# TK
 
-A new Flutter project.
+웹툰 좀 모아서 다 보고싶다!
+Simple Flutter APP
 
-## Getting Started
+## TODO
 
-This project is a starting point for a Flutter application.
+    - Search Bar 검색 바
+        - 애니메이션
+        - 기능
+        - navigate
+    - Control 컨트롤
+        - 애니메이션
+        - 기능
+        - navigate
 
-A few resources to get you started if this is your first Flutter project:
+## TK의 현재
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+이 앱은 불법이다.
+따라서 플레이스토어에 올리지 않을 계획
+아는 사람들만 알아서 쓰자
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+## TK 의 미래
+
+현재는 툰코에서만 웹툰을 파싱해서 가져오고 있지만, 앞으론 더많은 서비스를 연결하는 방식으로 확장해야 한다.
+예를 들어 protoon, 등 불법 사이트는 물론이고 네이버 웹툰에서도 파싱해서 가져올 것이다.
+
+이때 문제점은 같은 웹툰이 섞여있을 수 있다.
+따라서 각 사이트마다 우선순위를 정해서 파싱을 해야한다.
+
+백엔드를 만드는것은 좀 불안하고 선을 넘은듯 하다.
+그래서 그냥 파싱하는 것만으로 만족할 것이다.
