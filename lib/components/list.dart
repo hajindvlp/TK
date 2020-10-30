@@ -48,7 +48,7 @@ class _ListWidgetState extends State<ListWidget> {
     String title = widget.title.replaceAll("-", " ");
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(10, 40, 0, 10),
+      padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,

@@ -49,7 +49,7 @@ class _TableWidgetState extends State<TableWidget> {
     const TextStyle titleStyle = TextStyle(fontSize: 36, fontWeight: FontWeight.bold);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 30, 20, 5),
+      padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -104,31 +104,28 @@ class _TableWidgetState extends State<TableWidget> {
   // Builds GridView Items
   List<Widget> _renderElements(snapshot) {
     List<Widget> elements = List<Widget>();
-    TextStyle smallTitleFontStyle =
+    TextStyle listTitleStyle =
         TextStyle(fontSize: 17, fontWeight: FontWeight.bold);
 
     for (final e in snapshot.data.elements) {
-      elements.add(Container(
-          child: Card(
-              elevation: 10,
-              child: InkWell(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Image.network(e.thumbnail),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
-                        padding: EdgeInsets.symmetric(horizontal: 2.0),
-                        alignment: Alignment.center,
-                        child: Text(
-                          e.title,
-                          style: smallTitleFontStyle,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      )
-                    ],
-                  ),
-                  onTap: () => onGridItemTap(e.path, e.title)))));
+      elements.add(Card(
+        elevation: 10,
+        child: InkWell(
+          onTap: () => onGridItemTap(e.path, e.title),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Image.network(e.thumbnail),
+              Container(
+                margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                padding: EdgeInsets.symmetric(horizontal: 2.0),
+                alignment: Alignment.center,
+                child: Text(e.title, style: listTitleStyle, overflow: TextOverflow.ellipsis,),
+              )
+            ],
+          ),
+        ),
+      ));
     }
     return elements;
   }

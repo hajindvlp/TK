@@ -19,24 +19,28 @@ class MyApp extends StatelessWidget {
         if (settings.name == ListWidget.routeName) {
           final ListArgs args = settings.arguments;
           return MaterialPageRoute(builder: (context) {
-            return ListWidget(args.path, args.title, key: UniqueKey());
+            return SafeArea(
+              child: ListWidget(args.path, args.title, key: UniqueKey()),
+            );
           });
         } else if (settings.name == ViewWidget.routeName) {
           final ViewArgs args = settings.arguments;
           return MaterialPageRoute(builder: (context) {
-            return ViewWidget(args.path, args.title, key: UniqueKey());
+            return SafeArea(
+              child: ViewWidget(args.path, args.title, key: UniqueKey()),
+            );
           });
         } else {
           // TODO : 404 page
           return MaterialPageRoute(builder: (context) {
-            return TableList();
+            return SafeArea(child: TableList());
           });
         }
       },
       title: "tk App",
       initialRoute: '/',
       routes: {
-        '/': (context) => TableList(),
+        '/': (context) => SafeArea(child: TableList()),
       },
     );
   }

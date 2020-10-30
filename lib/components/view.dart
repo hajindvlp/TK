@@ -15,12 +15,12 @@ class ViewWidget extends StatefulWidget {
 }
 
 class _ViewWidgetState extends State<ViewWidget> {
-  Future<ViewModel> futureViewModel;
+  bool _showControl = true;
 
   @override
   void initState() {
     super.initState();
-    futureViewModel = fetchView(widget.path, widget.title);
+    _showControl = true;
   }
 
   @override
@@ -32,25 +32,80 @@ class _ViewWidgetState extends State<ViewWidget> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: ListView(
-      children: [
-        Container(child: _renderTitle()),
-        Expanded(child: _renderImages())
-      ],
-    ));
+  GestureTapCallback toggleShowControl() {
+    return () {setState(() {_showControl = !_showControl; });};
   }
 
-  Widget _renderTitle() {
-    const titleTextStyle = TextStyle(fontSize: 40, fontWeight: FontWeight.bold);
-    return Container(
-        child: Text(
-      widget.title,
-      style: titleTextStyle,
-      overflow: TextOverflow.ellipsis,
-    ));
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> controls =
+        (_showControl) ? [_renderTopControl(), _renderBottomControl()] : [];
+
+    return Scaffold(
+          body: Stack(
+            children: [
+              InkWell(
+                onTap: toggleShowControl(),
+                child : ListView(children: [ImageList(widget.path, widget.title),]),
+              ),
+              ...controls,
+            ],
+          ),
+        );
+  }
+
+  Widget _renderTopControl() {
+    const titleTextStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+    return Positioned(
+      top: 0,
+      child: Row(
+          children: [
+            Icon(Icons.arrow_back_ios, size: 24),
+            Text(
+              widget.title,
+              style: titleTextStyle,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Divider(thickness: 2,),
+          ]),
+    );
+  }
+
+  Widget _renderBottomControl() {
+    const double iconSize = 20;
+    return Positioned(
+      bottom: 0,
+      child: Row(
+        children: [
+          Divider(thickness: 2,),
+          Icon(Icons.format_list_bulleted, size: iconSize),
+          Icon(Icons.arrow_back_ios_rounded, size: iconSize),
+          Icon(Icons.arrow_forward_ios_rounded, size: iconSize),
+        ],
+      ),
+    );
+  }
+}
+
+class ImageList extends StatelessWidget {
+  String path, title;
+  ImageList(this.path, this.title);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(child: FutureBuilder<ViewModel>(
+      future: fetchView(this.path, this.title),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Column(
+            children: buildImage(snapshot),
+          );
+        } else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        }
+        return loading();
+      },
+    ),);
   }
 
   List<Widget> buildImage(snapshot) {
@@ -76,22 +131,5 @@ class _ViewWidgetState extends State<ViewWidget> {
     }
 
     return elements;
-  }
-
-  Widget _renderImages() {
-    return Container(
-        child: FutureBuilder<ViewModel>(
-            future: futureViewModel,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Column(
-                  children: buildImage(snapshot),
-                );
-              } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
-
-              return loading();
-            }));
   }
 }
