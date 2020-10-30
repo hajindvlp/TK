@@ -1,20 +1,15 @@
 import 'dart:async';
 import 'package:html/parser.dart';
 import '../utils/fetchGet.dart';
+import 'model.dart';
 
-class ListArgs {
-  final String path;
-  final String title;
-
-  ListArgs(this.path, this.title);
+class ListArgs extends BasicModel {
+  ListArgs(path, title) : super(path: path, title: title);
 }
 
-class ListModel {
-  String path;
-  String title;
-  List<ListElement> elements;
-
-  ListModel({this.path, this.title, this.elements});
+class ListModel extends ContainerModel<ListElement> {
+  ListModel({path, title, elements})
+      : super(path: path, title: title, elements: elements);
 
   factory ListModel.fromHTML(String path, String title, String html) {
     var document = parse(html);
@@ -29,11 +24,8 @@ class ListModel {
   }
 }
 
-class ListElement {
-  String path;
-  String title;
-
-  ListElement(this.path, this.title);
+class ListElement extends BasicModel {
+  ListElement(path, title) : super(path: path, title: title);
 }
 
 Future<ListModel> fetchList(String path, String title) async {

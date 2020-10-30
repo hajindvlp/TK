@@ -1,6 +1,13 @@
 import 'package:http/http.dart' as http;
 
 Future<http.Response> fetchGet(String path) {
-  const ENDPOINT = "https://tkor.pw";
-  return http.get('${ENDPOINT}${path}');
+  return http.get(makeFull(path));
+}
+
+String makeFull(String path) {
+  if (path.startsWith("http")) {
+    return path;
+  } else {
+    return "https://tkor.pw${path}";
+  }
 }

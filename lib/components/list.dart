@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tk/models/list.dart';
 import 'package:tk/models/view.dart';
-import './view.dart';
+import 'view.dart';
+import 'common.dart';
 
 class ListWidget extends StatefulWidget {
   static const String routeName = "/list";
@@ -25,10 +26,25 @@ class _ListWidgetState extends State<ListWidget> {
     futureListModel = fetchList(widget.path, widget.title);
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Column(
+      children: [
+        _renderTitle(),
+        Divider(
+          height: 10,
+          thickness: 2,
+        ),
+        Expanded(child: _renderList()),
+      ],
+    ));
+  }
+
   // TODO : Controls
   // TODO : change hyphens to space
   // TODO : Image & Scrolling thingy
-  Widget buildTitle() {
+  Widget _renderTitle() {
     return Row(children: <Widget>[
       Container(
           padding: EdgeInsets.fromLTRB(20, 40, 0, 10),
@@ -37,13 +53,30 @@ class _ListWidgetState extends State<ListWidget> {
     ]);
   }
 
-  void onListTileTap(String path, String title) {
-    Navigator.pushNamed(context, ViewWidget.routeName,
-        arguments: ViewArgs(path, title));
+  Widget _renderList() {
+    return Container(
+        decoration: BoxDecoration(color: Color.fromARGB(1, 244, 244, 244)),
+        child: _handleFuture());
+  }
+
+  FutureBuilder<ListModel> _handleFuture() {
+    return FutureBuilder<ListModel>(
+        future: futureListModel,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ListView(
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+              children: _renderListTile(snapshot),
+            );
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+          return loading();
+        });
   }
 
   // TODO : swipe to download or download checkbox
-  List<Widget> buildListTile(snapshot) {
+  List<Widget> _renderListTile(snapshot) {
     List<Widget> elements = List<Widget>();
     TextStyle titleFontStyle =
         TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
@@ -78,41 +111,8 @@ class _ListWidgetState extends State<ListWidget> {
     return elements;
   }
 
-  Widget buildList() {
-    return Container(
-        decoration: BoxDecoration(color: Color.fromARGB(1, 244, 244, 244)),
-        child: FutureBuilder<ListModel>(
-            future: futureListModel,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return ListView(
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                  children: buildListTile(snapshot),
-                );
-              } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
-
-              return Container(
-                  alignment: Alignment.center,
-                  height: 100,
-                  width: 100,
-                  child: CircularProgressIndicator());
-            }));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: Column(
-      children: [
-        Container(child: buildTitle()),
-        Divider(
-          height: 10,
-          thickness: 2,
-        ),
-        Expanded(child: buildList()),
-      ],
-    ));
+  void onListTileTap(String path, String title) {
+    Navigator.pushNamed(context, ViewWidget.routeName,
+        arguments: ViewArgs(path, title));
   }
 }

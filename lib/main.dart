@@ -24,6 +24,11 @@ class MyApp extends StatelessWidget {
           return MaterialPageRoute(builder: (context) {
             return ViewWidget(args.path, args.title, key: UniqueKey());
           });
+        } else {
+          // TODO : 404 page
+          return MaterialPageRoute(builder: (context) {
+            return TableList();
+          });
         }
       },
       title: "tk App",

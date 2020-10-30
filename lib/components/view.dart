@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/view.dart';
+import '../utils/fetchGet.dart';
+import 'common.dart';
 
 class ViewWidget extends StatefulWidget {
   static const String routeName = "/view";
@@ -30,7 +32,18 @@ class _ViewWidgetState extends State<ViewWidget> {
     }
   }
 
-  Widget buildTitle() {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: ListView(
+      children: [
+        Container(child: _renderTitle()),
+        Expanded(child: _renderImages())
+      ],
+    ));
+  }
+
+  Widget _renderTitle() {
     const titleTextStyle = TextStyle(fontSize: 40, fontWeight: FontWeight.bold);
     return Container(
         child: Text(
@@ -45,18 +58,27 @@ class _ViewWidgetState extends State<ViewWidget> {
 
     for (final e in snapshot.data.elements) {
       if (e.path != null) {
-        if (e.path.startsWith("http")) {
-          elements.add(Image.network("${e.path}"));
-        } else {
-          elements.add(Image.network(makeFull(e.path)));
-        }
+        String path;
+        path = makeFull(e.path);
+
+        elements.add(Image.network(path, loadingBuilder: (BuildContext context,
+            Widget child, ImageChunkEvent loadingProgress) {
+          if (loadingProgress == null) {
+            return child;
+          } else {
+            return Container(
+              child: loading(),
+              padding: EdgeInsets.symmetric(vertical: 100),
+            );
+          }
+        }));
       }
     }
 
     return elements;
   }
 
-  Widget buildImages() {
+  Widget _renderImages() {
     return Container(
         child: FutureBuilder<ViewModel>(
             future: futureViewModel,
@@ -69,22 +91,7 @@ class _ViewWidgetState extends State<ViewWidget> {
                 return Text("${snapshot.error}");
               }
 
-              return Container(
-                  alignment: Alignment.center,
-                  height: 100,
-                  width: 100,
-                  child: CircularProgressIndicator());
+              return loading();
             }));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: ListView(
-      children: [
-        Container(child: buildTitle()),
-        Expanded(child: buildImages())
-      ],
-    ));
   }
 }

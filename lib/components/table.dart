@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
-import './list.dart';
+import 'list.dart';
+import 'common.dart';
 
 import '../models/table.dart';
 import '../models/list.dart';
 
 class TableWidget extends StatefulWidget {
-  TableWidget({Key key, this.path}) : super(key: key);
   final String path;
+
+  TableWidget({Key key, this.path}) : super(key: key);
+
   @override
   _TableWidgetState createState() => _TableWidgetState();
 }
@@ -23,16 +26,32 @@ class _TableWidgetState extends State<TableWidget> {
     futureTableModel = fetchTable(widget.path);
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        _renderTitle(),
+        Divider(
+          height: 10,
+          thickness: 2,
+        ),
+        Expanded(child: _renderTableList()),
+      ],
+    );
+  }
+
   // Builds Top bar
-  Widget buildTitle() {
+  Widget _renderTitle() {
     // TODO : Search Bar
     // TOOD : top animation controls
+    String title = widget.path.split('/')[1];
 
     return Row(
       children: <Widget>[
         Container(
             padding: EdgeInsets.fromLTRB(20, 40, 0, 10),
-            child: Text(widget.path.split('/')[1], style: titleFontStyle)),
+            child: Text(title, style: titleFontStyle)),
         // TextField(
         //   decoration: InputDecoration(
         //     labelText: "Search",
@@ -42,13 +61,41 @@ class _TableWidgetState extends State<TableWidget> {
     );
   }
 
+  // Builds GridView
+  Widget _renderTableList() {
+    return Container(
+        decoration: BoxDecoration(color: Color.fromARGB(1, 244, 244, 244)),
+        child: _handleFuture());
+  }
+
+  FutureBuilder<TableModel> _handleFuture() {
+    return FutureBuilder<TableModel>(
+      future: futureTableModel,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return GridView.count(
+            padding: EdgeInsets.all(10),
+            crossAxisCount: 3,
+            crossAxisSpacing: 6,
+            mainAxisSpacing: 10,
+            children: _renderElements(snapshot),
+            childAspectRatio: 0.75,
+          );
+        } else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        }
+        return loading();
+      },
+    );
+  }
+
   void onGridItemTap(String path, String title) {
     Navigator.pushNamed(context, ListWidget.routeName,
         arguments: ListArgs(path, title));
   }
 
   // Builds GridView Items
-  List<Widget> buildElements(snapshot) {
+  List<Widget> _renderElements(snapshot) {
     List<Widget> elements = List<Widget>();
     TextStyle smallTitleFontStyle =
         TextStyle(fontSize: 17, fontWeight: FontWeight.bold);
@@ -77,50 +124,6 @@ class _TableWidgetState extends State<TableWidget> {
                   onTap: () => onGridItemTap(e.path, e.title)))));
     }
     return elements;
-  }
-
-  // Builds GridView
-  Widget buildTableList() {
-    return Container(
-        decoration: BoxDecoration(color: Color.fromARGB(1, 244, 244, 244)),
-        child: FutureBuilder<TableModel>(
-          future: futureTableModel,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return GridView.count(
-                padding: EdgeInsets.all(10),
-                crossAxisCount: 3,
-                crossAxisSpacing: 6,
-                mainAxisSpacing: 10,
-                children: buildElements(snapshot),
-                childAspectRatio: 0.75,
-              );
-            } else if (snapshot.hasError) {
-              return Text("${snapshot.error}");
-            }
-
-            return Container(
-                alignment: Alignment.center,
-                height: 100,
-                width: 100,
-                child: CircularProgressIndicator());
-          },
-        ));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Container(child: buildTitle()),
-        Divider(
-          height: 10,
-          thickness: 2,
-        ),
-        Expanded(child: buildTableList()),
-      ],
-    );
   }
 }
 

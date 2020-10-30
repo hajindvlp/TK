@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'package:html/parser.dart';
 import '../utils/fetchGet.dart';
+import 'model.dart';
 
-class TableModel {
-  String path;
-  String title;
-  List<TableElement> elements;
-
-  TableModel({this.path, this.title, this.elements});
+class TableModel extends ContainerModel<TableElement> {
+  TableModel({path, title, elements})
+      : super(path: path, title: title, elements: elements);
 
   factory TableModel.fromHTML(String path, String html) {
     var document = parse(html);
@@ -30,20 +28,19 @@ class TableModel {
     var elements = List<TableElement>();
 
     for (var i = 0; i < titles.length; i++) {
-      elements.add(TableElement(urls[i], imageSrcs[i], titles[i], intros[i]));
+      elements.add(TableElement(urls[i], titles[i], imageSrcs[i], intros[i]));
     }
     return TableModel(
         path: path, title: path.split('/')[1], elements: elements);
   }
 }
 
-class TableElement {
-  String path;
+class TableElement extends BasicModel {
   String thumbnail;
-  String title;
   String intro;
 
-  TableElement(this.path, this.thumbnail, this.title, this.intro);
+  TableElement(path, title, this.thumbnail, this.intro)
+      : super(path: path, title: title);
 }
 
 Future<TableModel> fetchTable(String path) async {
