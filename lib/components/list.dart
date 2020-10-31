@@ -27,17 +27,13 @@ class _ListWidgetState extends State<ListWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _renderTitle(),
-            Divider(
-              height: 10,
-              thickness: 2,
-            ),
-            Expanded(child: _renderList()),
-          ],
-    ));
+      body: Column(
+        children: [
+          _renderTitle(),
+          _renderList(),
+        ],
+      ),
+    );
   }
 
   // TODO : change hyphens to space
@@ -46,8 +42,24 @@ class _ListWidgetState extends State<ListWidget> {
     const TextStyle titleStyle = TextStyle(fontSize: 28, fontWeight: FontWeight.bold);
     const double iconSize = 30;
     String title = widget.title.replaceAll("-", " ");
+    BoxDecoration titleDeco = BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(10),
+          bottomRight: Radius.circular(10)
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.5),
+          spreadRadius: 5,
+          blurRadius: 7,
+          offset: Offset(0, 3),
+        ),
+      ],
+    );
 
-    return Padding(
+    return Container(
+      decoration: titleDeco,
       padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -70,9 +82,13 @@ class _ListWidgetState extends State<ListWidget> {
   }
 
   Widget _renderList() {
-    return Container(
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.only(top: 10),
         decoration: BoxDecoration(color: Color.fromARGB(1, 244, 244, 244)),
-        child: _handleFuture());
+        child: _handleFuture(),
+      ),
+    );
   }
 
   FutureBuilder<ListModel> _handleFuture() {

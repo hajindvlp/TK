@@ -68,31 +68,24 @@ class _ViewWidgetState extends State<ViewWidget> {
   }
 
   Widget _renderTopControl() {
+    const BoxDecoration bottomBorder = BoxDecoration(
+      border: Border(bottom: BorderSide(color: Colors.black38)),
+      color: Colors.white,
+    );
     const titleTextStyle = TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
     return Positioned(
       top: 0,
       width: MediaQuery.of(context).size.width,
       child: Container(
-        padding: EdgeInsets.fromLTRB(10, 4, 0, 4),
-        color: Colors.white,
-        child: Column(
+        padding: EdgeInsets.fromLTRB(12, 8, 0, 8),
+        decoration: bottomBorder,
+        child: Row(
           children: [
-            Row(
-              children: [
-                InkWell(
-                  child: Icon(Icons.arrow_back_ios, size: 24),
-                  onTap: () { Navigator.pop(context); },
-                ),
-                Text(
-                  widget.title,
-                  style: titleTextStyle,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+            InkWell(
+              child: Icon(Icons.arrow_back_ios, size: 24),
+              onTap: () { Navigator.pop(context); },
             ),
-            Divider(
-              thickness: 2,
-            ),
+            Text(widget.title, style: titleTextStyle, overflow: TextOverflow.ellipsis,),
           ],
         ),
       ),
@@ -100,6 +93,10 @@ class _ViewWidgetState extends State<ViewWidget> {
   }
 
   Widget _renderBottomControl() {
+    const BoxDecoration topBorder = BoxDecoration(
+      border: Border(top: BorderSide(color: Colors.black38)),
+      color: Colors.white,
+    );
     const double iconSize = 32;
     return Positioned(
       bottom: 0,
@@ -107,26 +104,18 @@ class _ViewWidgetState extends State<ViewWidget> {
         width: MediaQuery.of(context).size.width,
         alignment: Alignment.centerRight,
         padding: EdgeInsets.fromLTRB(0, 4, 10, 4),
-        color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+        decoration: topBorder,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Divider(
-              thickness: 2,
+            InkWell(
+              child: Icon(Icons.format_list_bulleted, size: iconSize),
+              onTap: () { Navigator.pop(context); },
             ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                InkWell(
-                  child: Icon(Icons.format_list_bulleted, size: iconSize),
-                  onTap: () { Navigator.pop(context); },
-                ),
-                SizedBox(width: 40),
-                backIconButton(),
-                SizedBox(width: 10),
-                forwardIconButton(),
-              ],
-            ),
+            SizedBox(width: 40),
+            backIconButton(),
+            SizedBox(width: 10),
+            forwardIconButton(),
           ],
         ),
       ),
@@ -142,7 +131,7 @@ class _ViewWidgetState extends State<ViewWidget> {
     if(idx + 1 < elements.length && elements.elementAt(idx+1).title != null) {
       color = Colors.black;
       cb = () {
-        Navigator.popAndPushNamed(context, ViewWidget.routeName,
+        Navigator.pushReplacementNamed(context, ViewWidget.routeName,
             arguments: ViewArgs(widget.idx + 1, widget.elements));
       };
     }
@@ -161,7 +150,7 @@ class _ViewWidgetState extends State<ViewWidget> {
     if(idx - 1 >= 0 && elements.elementAt(idx-1).title != null) {
       color = Colors.black;
       cb = () {
-        Navigator.popAndPushNamed(context, ViewWidget.routeName,
+        Navigator.pushReplacementNamed(context, ViewWidget.routeName,
             arguments: ViewArgs(widget.idx - 1, widget.elements));
       };
     }

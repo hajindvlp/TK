@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'list.dart';
 import 'common.dart';
-import 'setting.dart';
+import 'mypage.dart';
 
 import '../models/table.dart';
 import '../models/list.dart';
@@ -31,11 +31,7 @@ class _TableWidgetState extends State<TableWidget> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         _renderTitle(),
-        Divider(
-          height: 10,
-          thickness: 2,
-        ),
-        Expanded(child: _renderTableList()),
+        _renderTableList(),
       ],
     );
   }
@@ -46,16 +42,40 @@ class _TableWidgetState extends State<TableWidget> {
   Widget _renderTitle() {
     String title = widget.path.split('/')[1];
     const double iconSize = 40;
-    const TextStyle titleStyle = TextStyle(fontSize: 36, fontWeight: FontWeight.bold);
+    const TextStyle titleStyle = TextStyle(
+      fontSize: 36,
+      fontWeight: FontWeight.bold,
+    );
+    BoxDecoration titleDeco = BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(10),
+          bottomRight: Radius.circular(10)
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.5),
+          spreadRadius: 5,
+          blurRadius: 7,
+          offset: Offset(0, 3),
+        ),
+      ],
+    );
 
-    return Padding(
+    return Container(
+      decoration: titleDeco,
       padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+      // duration: Duration(seconds: 1),
+      // onEnd: () { Navigator.pushNamed(context, '/search'); },
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text(title, style: titleStyle),
           Spacer(),
-          Center(child: Icon(Icons.search, size: iconSize)),
+          InkWell(
+            child: Center(child: Icon(Icons.search, size: iconSize)),
+            onTap: () { Navigator.pushNamed(context, '/search'); },
+          ),
           SizedBox(width: 10),
           Center(child:
             RotatedBox(
@@ -70,9 +90,12 @@ class _TableWidgetState extends State<TableWidget> {
 
   // Builds GridView
   Widget _renderTableList() {
-    return Container(
+    return Expanded(
+      child: Container(
         decoration: BoxDecoration(color: Color.fromARGB(1, 244, 244, 244)),
-        child: _handleFuture());
+        child: _handleFuture(),
+      ),
+    );
   }
 
   FutureBuilder<TableModel> _handleFuture() {
@@ -138,7 +161,7 @@ class TableList extends StatefulWidget {
 
 class _TableListState extends State<TableList> {
   static const List<String> tablePaths = ["/웹툰", "/단행본", "/망가", "/포토툰"];
-  static const List<String> tableLabels = ["웹툰", "단행본", "망가", "포토툰", "설정"];
+  static const List<String> tableLabels = ["웹툰", "단행본", "망가", "포토툰", "마이페이지"];
   int _selectedIndex = 0;
 
   final List<BottomNavigationBarItem> items = <BottomNavigationBarItem>[
@@ -159,7 +182,7 @@ class _TableListState extends State<TableList> {
       label: tableLabels[3],
     ),
     BottomNavigationBarItem(
-      icon: Icon(Icons.settings),
+      icon: Icon(Icons.account_circle),
       label: tableLabels[4],
     ),
   ];
@@ -169,7 +192,7 @@ class _TableListState extends State<TableList> {
     TableWidget(key: UniqueKey(), path: tablePaths[1],),
     TableWidget(key: UniqueKey(), path: tablePaths[2],),
     TableWidget(key: UniqueKey(), path: tablePaths[3],),
-    Setting(),
+    MyPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -194,3 +217,12 @@ class _TableListState extends State<TableList> {
     );
   }
 }
+
+// Route _createRoute() {
+//   return PageRouteBuilder(
+//     pageBuilder: (context, animation, secondaryAnimation) => Search(),
+//     transitionsBuilder: (context, animation, secondaryAnimation, child) {
+//       return child;
+//     }
+//   );
+// }

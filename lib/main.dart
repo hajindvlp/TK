@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'components/table.dart';
 import 'components/list.dart';
 import 'components/view.dart';
+import 'components/search.dart';
 
 import 'models/list.dart';
 import 'models/view.dart';
@@ -28,6 +29,12 @@ class MyApp extends StatelessWidget {
           return MaterialPageRoute(builder: (context) {
             return SafeArea(
               child: ViewWidget(args.idx, args.elements, key: UniqueKey()),
+            );
+          });
+        } else if(settings.name == Search.routeName) {
+          return MaterialPageRoute(builder: (context) {
+            return SafeArea(
+              child: Search(),
             );
           });
         } else {
