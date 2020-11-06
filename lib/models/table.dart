@@ -7,7 +7,7 @@ class TableModel extends ContainerModel<TableElement> {
   TableModel({path, title, elements})
       : super(path: path, title: title, elements: elements);
 
-  factory TableModel.fromHTML(String path, String html) {
+  static TableModel fromHTML(String path, String html) {
     var document = parse(html);
 
     var urls = document
@@ -28,10 +28,18 @@ class TableModel extends ContainerModel<TableElement> {
     var elements = List<TableElement>();
 
     for (var i = 0; i < titles.length; i++) {
-      elements.add(TableElement(urls[i], titles[i], imageSrcs[i], intros[i]));
+      elements.add(TableElement(
+        urls[i],
+        titles[i],
+        imageSrcs[i],
+        intros[i],
+      ));
     }
     return TableModel(
-        path: path, title: path.split('/')[1], elements: elements);
+      path: path,
+      title: path.split('/')[1],
+      elements: elements,
+    );
   }
 }
 
